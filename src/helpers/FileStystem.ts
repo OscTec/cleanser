@@ -1,4 +1,4 @@
-import { readDir, BaseDirectory, readBinaryFile, createDir, removeDir } from '@tauri-apps/api/fs'
+import { readDir, BaseDirectory, readBinaryFile, createDir, removeDir, copyFile, removeFile } from '@tauri-apps/api/fs'
 import { pictureDir } from '@tauri-apps/api/path'
 import { Directory } from '../interfaces/Directory';
 import { Image } from '../interfaces/Image'
@@ -42,15 +42,6 @@ export const fetchFilesFromDirectory = async (directory: string): Promise<Image[
   }))
 
   return files
-
-  // return [
-  //   {
-  //     path: '',
-  //     dir: '',
-  //     name: '',
-  //     srcBlob: '',
-  //   }
-  // ]
 }
 
 export const createDirectory = async (directoryName: string) => {
@@ -59,4 +50,9 @@ export const createDirectory = async (directoryName: string) => {
 
 export const deleteDirectory = async (directoryName: string) => {
   await removeDir(`images/${directoryName}`, { dir: BaseDirectory.Picture });
+}
+
+export const moveFile = async (file: string, currentDir: string, targetDir: string) => {
+  await copyFile(`images/${currentDir}/${file}`, `images/${targetDir}/${file}`, { dir: BaseDirectory.Picture })
+  await removeFile(`images/${currentDir}/${file}`, { dir: BaseDirectory.Picture });
 }

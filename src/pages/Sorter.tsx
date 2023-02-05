@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
-import { fetchFilesFromDirectory, fetchImageDirectories } from "../helpers/FileStystem";
+import { fetchFilesFromDirectory, fetchImageDirectories, moveFile } from "../helpers/FileStystem";
 
 import DirectoryList from "../components/DirectoryList";
 import ImageScrollBar from "../components/ImageScrollBar";
@@ -10,12 +10,14 @@ import { Directory } from "../interfaces/Directory";
 import { Image } from '../interfaces/Image'
 
 import "../App.css";
+import TagBar from "../components/TagBar";
 
 export default function Folder() {
   const [dirs, setDirs] = useState<Directory[]>([])
-  const [activeDir, setActiveDir] = useState('')
+  const [activeDir, setActiveDir] = useState<string>('')
   const [images, setImages] = useState<Image[]>([])
-  const [imageIndex, setImageIndex] = useState(0)
+  const [imageIndex, setImageIndex] = useState<number>(0)
+  const [moveDirectory, setMoveDirectory] = useState<string>('')
   const ref = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLDivElement>(null)
 
@@ -34,9 +36,9 @@ export default function Folder() {
     })()
   }, [])
 
-  const handleKeyDown = (e: { key: string; }) => {
+  const handleKeyDown = async (e: { key: string; }) => {
     let nextRenderIndex = imageIndex
-    // if (e.repeat) return
+
     if (e.key === 'ArrowRight') {
       if (imageIndex + 1 >= images.length) {
         nextRenderIndex = 0
@@ -55,6 +57,11 @@ export default function Folder() {
         setImageIndex(imageIndex - 1)
       }
     }
+    if (e.key === 'Enter') {
+      if (moveDirectory) {
+        await moveImage()
+      }
+    }
   };
 
   useEffect(() => {
@@ -65,12 +72,23 @@ export default function Folder() {
     ref.current?.focus();
   }, []);
 
+  async function moveImage() {
+    if (dirs.find((dir) => dir.name === moveDirectory)) {
+      await moveFile(images[imageIndex].name, activeDir, moveDirectory)
+      const files = await fetchFilesFromDirectory(activeDir)
+      setImages(files)
+    }
+  }
+
   return (
-    <div style={styles.container as React.CSSProperties} ref={ref} tabIndex={-1} onKeyDown={handleKeyDown}>
-      <DirectoryList directories={dirs} activeDir={activeDir} setActiveDir={setActiveDir} setImageIndex={setImageIndex} setDirs={setDirs} />
-      <div style={styles.content as React.CSSProperties}>
-        <ImageViewer images={images} imageIndex={imageIndex}/>
-        <ImageScrollBar images={images} imageIndex={imageIndex} setImageIndex={setImageIndex} ref={listRef} />
+    <div ref={ref} tabIndex={-1} onKeyDown={handleKeyDown}>
+      <TagBar listItems={dirs.map(dir => dir.name)} moveDirectory={moveDirectory} setMoveDirectory={setMoveDirectory} />
+      <div style={styles.container as React.CSSProperties}>
+        <DirectoryList directories={dirs} activeDir={activeDir} setActiveDir={setActiveDir} setImageIndex={setImageIndex} setDirs={setDirs} />
+        <div style={styles.content as React.CSSProperties}>
+          <ImageViewer images={images} imageIndex={imageIndex}/>
+          <ImageScrollBar images={images} imageIndex={imageIndex} setImageIndex={setImageIndex} ref={listRef} />
+        </div>
       </div>
     </div>
   );
