@@ -20,6 +20,7 @@ export default function Folder() {
   const [moveDirectory, setMoveDirectory] = useState<string>('')
   const ref = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLDivElement>(null)
+  const tagBarRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     (async() => {
@@ -39,28 +40,45 @@ export default function Folder() {
   const handleKeyDown = async (e: { key: string; }) => {
     let nextRenderIndex = imageIndex
 
-    if (e.key === 'ArrowRight') {
-      if (imageIndex + 1 >= images.length) {
-        nextRenderIndex = 0
-        setImageIndex(0)
-      } else {
-        nextRenderIndex = imageIndex + 1
-        setImageIndex(imageIndex + 1)
-      }
-    }
-    if (e.key === 'ArrowLeft') {
-      if (imageIndex - 1 < 0) {
-        nextRenderIndex = images.length - 1
-        setImageIndex(images.length - 1)
-      } else {
-        nextRenderIndex = imageIndex - 1
-        setImageIndex(imageIndex - 1)
-      }
-    }
-    if (e.key === 'Enter') {
-      if (moveDirectory) {
-        await moveImage()
-      }
+    switch (e.key) {
+      case 'ArrowRight':
+        if (imageIndex + 1 >= images.length) {
+          nextRenderIndex = 0
+          setImageIndex(0)
+        } else {
+          nextRenderIndex = imageIndex + 1
+          setImageIndex(imageIndex + 1)
+        }
+        break
+      case 'ArrowLeft':
+        if (imageIndex - 1 < 0) {
+          nextRenderIndex = images.length - 1
+          setImageIndex(images.length - 1)
+        } else {
+          nextRenderIndex = imageIndex - 1
+          setImageIndex(imageIndex - 1)
+        }
+        break
+      case 'Enter':
+        if (moveDirectory) {
+          await moveImage()
+        }
+        break
+      case 'Backspace':
+        if (moveDirectory.length === 0) {
+          tagBarRef.current?.blur()
+          ref.current?.focus()
+        }
+        break
+      case 'Delete':
+        if (moveDirectory.length <= 1) {
+          tagBarRef.current?.blur()
+          ref.current?.focus()
+        }
+      default:
+        tagBarRef.current?.focus()
+        ref.current?.blur()
+        break;
     }
   };
 
@@ -82,7 +100,7 @@ export default function Folder() {
 
   return (
     <div ref={ref} tabIndex={-1} onKeyDown={handleKeyDown}>
-      <TagBar listItems={dirs.map(dir => dir.name)} moveDirectory={moveDirectory} setMoveDirectory={setMoveDirectory} />
+      <TagBar listItems={dirs.map(dir => dir.name)} moveDirectory={moveDirectory} setMoveDirectory={setMoveDirectory} ref={tagBarRef} />
       <div style={styles.container as React.CSSProperties}>
         <DirectoryList directories={dirs} activeDir={activeDir} setActiveDir={setActiveDir} setImageIndex={setImageIndex} setDirs={setDirs} />
         <div style={styles.content as React.CSSProperties}>
