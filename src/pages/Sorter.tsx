@@ -11,6 +11,7 @@ import { Image } from '../interfaces/Image'
 
 import "../App.css";
 import TagBar from "../components/TagBar";
+import { loopArrayIndex } from "../utils/util";
 
 export default function Folder() {
   const [dirs, setDirs] = useState<Directory[]>([])
@@ -38,26 +39,12 @@ export default function Folder() {
   }, [])
 
   const handleKeyDown = async (e: { key: string; }) => {
-    let nextRenderIndex = imageIndex
-
     switch (e.key) {
       case 'ArrowRight':
-        if (imageIndex + 1 >= images.length) {
-          nextRenderIndex = 0
-          setImageIndex(0)
-        } else {
-          nextRenderIndex = imageIndex + 1
-          setImageIndex(imageIndex + 1)
-        }
+        setImageIndex(loopArrayIndex(imageIndex, images.length, 1))
         break
       case 'ArrowLeft':
-        if (imageIndex - 1 < 0) {
-          nextRenderIndex = images.length - 1
-          setImageIndex(images.length - 1)
-        } else {
-          nextRenderIndex = imageIndex - 1
-          setImageIndex(imageIndex - 1)
-        }
+        setImageIndex(loopArrayIndex(imageIndex, images.length, -1))
         break
       case 'Enter':
         if (moveDirectory) {

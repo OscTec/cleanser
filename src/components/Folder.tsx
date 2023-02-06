@@ -22,7 +22,7 @@ export default function Folder() {
   }
 
   return (
-    <div className="container">
+    <div className='container'>
       <button onClick={() => {
         setShowImg(true)
         listDirs()

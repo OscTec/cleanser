@@ -1,15 +1,17 @@
 import { readDir, BaseDirectory, readBinaryFile, createDir, removeDir, copyFile, removeFile } from '@tauri-apps/api/fs'
-import { pictureDir } from '@tauri-apps/api/path'
+
 import { Directory } from '../interfaces/Directory';
 import { Image } from '../interfaces/Image'
 
+const baseDirectory = BaseDirectory.Picture
+const hostDirectory = 'images'
+
 export const fetchImageDirectories = async (): Promise<Directory[]> => {
-  const entries = await readDir('images', { dir: BaseDirectory.Picture, recursive: false })
-  const pictureDirPath = await pictureDir();
+  const entries = await readDir(hostDirectory, { dir: baseDirectory, recursive: false })
 
   const directories = entries.map((entry) => {
     return {
-      path: `${pictureDirPath}${entry.name}`,
+      path: entry.path,
       name: entry.name
     }
   })
@@ -18,7 +20,7 @@ export const fetchImageDirectories = async (): Promise<Directory[]> => {
 }
 
 const getBlob = async (directory: string): Promise<string> => {
-  const contents = await readBinaryFile(directory, { dir: BaseDirectory.Picture })
+  const contents = await readBinaryFile(directory, { dir: baseDirectory })
   const blob = new Blob([contents])
   const srcBlob = URL.createObjectURL(blob)
 
@@ -26,18 +28,14 @@ const getBlob = async (directory: string): Promise<string> => {
 }
 
 export const fetchFilesFromDirectory = async (directory: string): Promise<Image[]> => {
-  const entries = await readDir(`images/${directory}`, { dir: BaseDirectory.Picture, recursive: false })
-  const pictureDirPath = await pictureDir();
-
-  console.log('directory: ', directory)
-  console.log('entries: ', entries)
+  const entries = await readDir(`${hostDirectory}/${directory}`, { dir: baseDirectory, recursive: false })
 
   const files = await  Promise.all(entries.map(async (entry) => {
     return {
-      path: `${pictureDirPath}${entry.name}`,
-      dir: directory,
+      path: entry.path,
       name: entry.name,
-      srcBlob: await getBlob(`images/${directory}/${entry.name}`)
+      directory,
+      srcBlob: await getBlob(`${hostDirectory}/${directory}/${entry.name}`)
     }
   }))
 
@@ -45,14 +43,17 @@ export const fetchFilesFromDirectory = async (directory: string): Promise<Image[
 }
 
 export const createDirectory = async (directoryName: string) => {
-  await createDir(`images/${directoryName}`, { dir: BaseDirectory.Picture, recursive: true });
+  await createDir(`${hostDirectory}/${directoryName}`, { dir: baseDirectory, recursive: true });
 }
 
 export const deleteDirectory = async (directoryName: string) => {
-  await removeDir(`images/${directoryName}`, { dir: BaseDirectory.Picture });
+  await removeDir(`${hostDirectory}/${directoryName}`, { dir: baseDirectory });
 }
 
 export const moveFile = async (file: string, currentDir: string, targetDir: string) => {
-  await copyFile(`images/${currentDir}/${file}`, `images/${targetDir}/${file}`, { dir: BaseDirectory.Picture })
-  await removeFile(`images/${currentDir}/${file}`, { dir: BaseDirectory.Picture });
+  const sourcePath = `${hostDirectory}/${currentDir}/${file}`
+  const targetPath = `${hostDirectory}/${targetDir}/${file}`
+
+  await copyFile(sourcePath, targetPath, { dir: baseDirectory })
+  await removeFile(sourcePath, { dir: baseDirectory });
 }
