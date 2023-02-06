@@ -38,6 +38,12 @@ export default function Folder() {
     })()
   }, [])
 
+  function incrementDirectory(incr: number) {
+    const currentDirIndex = dirs.findIndex((dir) => dir.name === activeDir)
+    const nextDirIndex = loopArrayIndex(currentDirIndex, dirs.length, incr)
+    setActiveDir(dirs[nextDirIndex].name)
+  }
+
   const handleKeyDown = async (e: { key: string; }) => {
     switch (e.key) {
       case 'ArrowRight':
@@ -46,6 +52,14 @@ export default function Folder() {
       case 'ArrowLeft':
         setImageIndex(loopArrayIndex(imageIndex, images.length, -1))
         break
+      case 'ArrowUp': {
+        incrementDirectory(-1)
+        break
+      }
+      case 'ArrowDown': {
+        incrementDirectory(1)
+        break
+      }
       case 'Enter':
         if (moveDirectory) {
           await moveImage()
