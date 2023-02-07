@@ -53,10 +53,12 @@ export default function Folder() {
         setImageIndex(loopArrayIndex(imageIndex, images.length, -1))
         break
       case 'ArrowUp': {
+        setImageIndex(0)
         incrementDirectory(-1)
         break
       }
       case 'ArrowDown': {
+        setImageIndex(0)
         incrementDirectory(1)
         break
       }

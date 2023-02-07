@@ -12,8 +12,8 @@ async function handleCreateNewDirectory(newDirectory: string, setDirs: any) {
 function directory(name: string, activeDir: string, setActiveDir: any, setImageIndex: any, setDirs: any) {
   return (
     <div key={name} style={{...styles.image, ...(activeDir === name && styles.active), display: 'flex'}} onClick={() => {
-      setActiveDir(name)
       setImageIndex(0)
+      setActiveDir(name)
     }}>
       <h2 style={{ flexGrow: 1}}>{name}</h2>
       <button onClick={async () => {
