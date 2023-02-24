@@ -2,7 +2,7 @@ import { Dispatch, forwardRef } from 'react'
 
 import { Image } from '../interfaces/Image'
 
-import "../App.css"
+import "../css/App.css"
 
 interface Props {
   images: Image[]

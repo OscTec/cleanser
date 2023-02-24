@@ -9,7 +9,7 @@ import ImageViewer from '../components/ImageViewer'
 import { Directory } from "../interfaces/Directory";
 import { Image } from '../interfaces/Image'
 
-import "../App.css";
+import "../css/App.css";
 import TagBar from "../components/TagBar";
 import { loopArrayIndex } from "../utils/util";
 
@@ -102,9 +102,9 @@ export default function Folder() {
   }
 
   return (
-    <div ref={ref} tabIndex={-1} onKeyDown={handleKeyDown}>
+    <div style={styles.container} ref={ref} tabIndex={-1} onKeyDown={handleKeyDown}>
       <TagBar listItems={dirs.map(dir => dir.name)} moveDirectory={moveDirectory} setMoveDirectory={setMoveDirectory} ref={tagBarRef} />
-      <div style={styles.container as React.CSSProperties}>
+      <div style={styles.bodyContainer as React.CSSProperties}>
         <DirectoryList directories={dirs} activeDir={activeDir} setActiveDir={setActiveDir} setImageIndex={setImageIndex} setDirs={setDirs} />
         <div style={styles.content as React.CSSProperties}>
           <ImageViewer images={images} imageIndex={imageIndex}/>
@@ -117,16 +117,20 @@ export default function Folder() {
 
 const styles = {
   container: {
-    margin: 0,
+    height: '720px',
+    width: '1280px',
+    backgroundColor: 'blue'
+  },
+  bodyContainer: {
     display: 'flex',
-    flexDirection: 'row',
-    maxWidth: '100vw'
+    height: 'auto',
   },
   content: {
     display: 'flex',
     flexDirection: 'column',
     backgroundColor: '#313639',
     flexGrow: 0,
-    maxWidth: '75%'
+    maxWidth: '75%',
+    // height: '100%'
   }
 }

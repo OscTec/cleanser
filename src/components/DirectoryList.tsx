@@ -1,5 +1,5 @@
 import { useState } from "react";
-import "../App.css";
+import "../css/App.css";
 import { createDirectory, deleteDirectory, fetchImageDirectories } from "../helpers/FileStystem";
 import { Directory } from "../interfaces/Directory";
 
@@ -11,7 +11,7 @@ async function handleCreateNewDirectory(newDirectory: string, setDirs: any) {
 
 function directory(name: string, activeDir: string, setActiveDir: any, setImageIndex: any, setDirs: any) {
   return (
-    <div key={name} style={{...styles.image, ...(activeDir === name && styles.active), display: 'flex'}} onClick={() => {
+    <div key={name} style={{...styles.image, ...(activeDir === name && styles.active), display: 'flex', padding: '5px', borderRadius: '5px' }} onClick={() => {
       setImageIndex(0)
       setActiveDir(name)
     }}>
@@ -29,7 +29,7 @@ export default function DirectoryList({ directories, activeDir, setActiveDir, se
   const [newDirectory, setNewDirectory] = useState('')
 
   return (
-   <div style={{display: 'flex', flexDirection: 'column', backgroundColor: 'teal'}}>
+   <div style={styles.container as React.CSSProperties}>
       { directories.length > 0 &&
         directories.map((dir: Directory) => directory(dir.name, activeDir, setActiveDir, setImageIndex, setDirs))
       }
@@ -41,18 +41,21 @@ export default function DirectoryList({ directories, activeDir, setActiveDir, se
 
 const styles = {
   container: {
-    margin: 0,
     display: 'flex',
-    flexDirection: 'row',
-    textAlign: 'center',
+    flexDirection: 'column',
+    backgroundColor: 'teal',
+    height: '100%',
+    width: '15rem',
+    borderRadius: '5px'
   },
   image: {
     borderStyle: 'solid',
     borderWidth: '10px',
-    borderColor: 'black',
+    // borderColor: 'black',
+    borderColor: 'teal',
   },
   active: {
-    borderColor: 'green',
+    borderColor: 'black',
     borderWidth: '10px',
     animationDuration: '0s',
     animationDelay: '0s'

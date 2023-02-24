@@ -71,11 +71,11 @@
     },
     "windows": [
       {
-        "fullscreen": false,
-        "height": 900,
-        "resizable": true,
         "title": "cleanser",
-        "width": 1600
+        "fullscreen": false,
+        "height": 720,
+        "width": 1280,
+        "resizable": true
       }
     ]
   }

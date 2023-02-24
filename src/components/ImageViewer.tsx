@@ -1,6 +1,6 @@
 import { Image } from "../interfaces/Image";
 
-import "../App.css";
+import "../css/App.css";
 
 export default function ImageViewer({ images, imageIndex }: { images: Image[], imageIndex: number }) {
   return (
